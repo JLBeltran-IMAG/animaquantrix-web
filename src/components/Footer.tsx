@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { useLanguage } from '../app/LanguageContext'
+import { useLanguage } from '../app/useLanguage'
 import { getSectionDestination, type TopLevelSection } from '../app/routes'
 import SmartLink from './SmartLink'
 

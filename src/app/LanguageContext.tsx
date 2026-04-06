@@ -1,18 +1,10 @@
 import {
-  createContext,
-  useContext,
   useEffect,
   useState,
   type ReactNode,
 } from 'react'
 import { getPreferredLanguage, type Language } from './i18n'
-
-type LanguageContextValue = {
-  language: Language
-  setLanguage: (language: Language) => void
-}
-
-const LanguageContext = createContext<LanguageContextValue | null>(null)
+import { LanguageContext } from './language-context'
 
 type LanguageProviderProps = {
   children: ReactNode
@@ -30,14 +22,4 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       {children}
     </LanguageContext.Provider>
   )
-}
-
-export function useLanguage() {
-  const context = useContext(LanguageContext)
-
-  if (!context) {
-    throw new Error('useLanguage must be used within LanguageProvider')
-  }
-
-  return context
 }

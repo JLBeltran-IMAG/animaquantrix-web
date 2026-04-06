@@ -1,4 +1,4 @@
-import { useLanguage } from '../app/LanguageContext'
+import { useLanguage } from '../app/useLanguage'
 import { getSectionContent } from '../lib/content'
 import type { SectionKey } from '../content/registry'
 

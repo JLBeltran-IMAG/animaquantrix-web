@@ -72,7 +72,7 @@ function parseFrontmatter(frontmatter: string): FrontmatterObject {
       continue
     }
 
-    const itemStartMatch = line.match(/^  -\s*([a-zA-Z0-9_-]+):\s*(.*)$/)
+    const itemStartMatch = line.match(/^\s{2}-\s*([a-zA-Z0-9_-]+):\s*(.*)$/)
     if (itemStartMatch && currentArrayKey) {
       const [, itemKey, rawValue] = itemStartMatch
       currentItem = {
@@ -82,7 +82,7 @@ function parseFrontmatter(frontmatter: string): FrontmatterObject {
       continue
     }
 
-    const itemFieldMatch = line.match(/^    ([a-zA-Z0-9_-]+):\s*(.*)$/)
+    const itemFieldMatch = line.match(/^\s{4}([a-zA-Z0-9_-]+):\s*(.*)$/)
     if (itemFieldMatch && currentItem) {
       const [, itemKey, rawValue] = itemFieldMatch
       currentItem[itemKey] = cleanValue(rawValue)

@@ -24,7 +24,9 @@ function HeroSection({
   badge,
 }: HeroSectionProps) {
   const slides = metadata.slides ?? []
-  const [activeSlide, setActiveSlide] = useState(0)
+  const [activeSlide, setActiveSlide] = useState(() =>
+    slides.length > 0 ? 0 : -1,
+  )
 
   useEffect(() => {
     if (slides.length <= 1) {
@@ -37,14 +39,14 @@ function HeroSection({
 
     return () => window.clearInterval(interval)
   }, [slides.length])
-
-  useEffect(() => {
-    if (activeSlide >= slides.length) {
-      setActiveSlide(0)
-    }
-  }, [activeSlide, slides.length])
-
-  const currentSlide = slides[activeSlide]
+  const normalizedActiveSlide =
+    slides.length > 0
+      ? activeSlide >= 0
+        ? activeSlide % slides.length
+        : 0
+      : -1
+  const currentSlide =
+    normalizedActiveSlide >= 0 ? slides[normalizedActiveSlide] : undefined
   const heroIntro = metadata.subtitle
   const heroHasTitle = Boolean(metadata.title)
   const heroSlidesLabel = metadata.title || metadata.subtitle || id
@@ -167,10 +169,10 @@ function HeroSection({
                     key={`${slide.title}-${index}`}
                     type="button"
                     className={`hero-slide-trigger ${
-                      index === activeSlide ? 'is-active' : ''
+                      index === normalizedActiveSlide ? 'is-active' : ''
                     }`}
                     onClick={() => setActiveSlide(index)}
-                    aria-pressed={index === activeSlide}
+                    aria-pressed={index === normalizedActiveSlide}
                     aria-label={getSlideLabel(slide, index)}
                   >
                     <span className="hero-slide-trigger-dot" />
