@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { useLocation } from 'react-router-dom'
 import type { SectionItem, SectionMetadata } from '../../lib/content'
 import MarkdownContent from '../MarkdownContent'
 import SmartLink from '../SmartLink'
@@ -30,8 +31,22 @@ function OverviewSection({
   accentColor,
   badge,
 }: OverviewSectionProps) {
+  const location = useLocation()
   const sectionHeading = metadata.title || metadata.subtitle
   const sectionSummary = metadata.title ? metadata.subtitle : ''
+  const availableCollections: Array<{ key: string; items: SectionItem[] }> = [
+    { key: 'topics', items: metadata.topics },
+    { key: 'publications', items: metadata.publications },
+  ].filter((collection) => collection.items.length > 0 || location.hash === `#${collection.key}`)
+  const activeCollectionKey =
+    location.hash && availableCollections.some((entry) => `#${entry.key}` === location.hash)
+      ? location.hash.slice(1)
+      : availableCollections[0]?.key
+  const activeCollection = availableCollections.find(
+    (collection) => collection.key === activeCollectionKey,
+  )
+  const visibleItems = activeCollection ? activeCollection.items : metadata.items
+  const hasCollectionSwitching = availableCollections.length > 0
 
   return (
     <section
@@ -52,7 +67,13 @@ function OverviewSection({
               key={`${button.label}-${button.href}`}
               href={button.href}
               className={`section-button ${
-                index === 0 ? 'section-button--primary' : 'section-button--secondary'
+                hasCollectionSwitching
+                  ? button.href.endsWith(`#${activeCollectionKey}`)
+                    ? 'section-button--active'
+                    : 'section-button--neutral'
+                  : index === 0
+                    ? 'section-button--primary'
+                    : 'section-button--secondary'
               }`}
             >
               {button.label}
@@ -63,9 +84,9 @@ function OverviewSection({
 
       <MarkdownContent content={content} className="section-content" />
 
-      {metadata.items.length > 0 ? (
+      {visibleItems.length > 0 ? (
         <div className="section-items-grid">
-          {metadata.items.map((item, index) => (
+          {visibleItems.map((item, index) => (
             <article className="section-item-card" key={`${item.title}-${index}`}>
               {item.image ? (
                 <img

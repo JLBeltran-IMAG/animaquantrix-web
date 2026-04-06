@@ -1,15 +1,15 @@
+import aboutMarkdown from './about.md?raw'
 import contactMarkdown from './contact.md?raw'
 import heroMarkdown from './hero.md?raw'
 import researchMarkdown from './research.md?raw'
 import softwareMarkdown from './software.md?raw'
-import teamMarkdown from './team.md?raw'
 
-export type SectionKey = 'hero' | 'research' | 'team' | 'software' | 'contact'
+export type SectionKey = 'hero' | 'research' | 'about' | 'software' | 'contact'
 
 const SECTION_MARKDOWN: Record<SectionKey, string> = {
   hero: heroMarkdown,
   research: researchMarkdown,
-  team: teamMarkdown,
+  about: aboutMarkdown,
   software: softwareMarkdown,
   contact: contactMarkdown,
 }

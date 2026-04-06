@@ -31,8 +31,8 @@ slides_en:
     description: The site can grow section by section as publications, collaborators, and repositories are added.
     image: "/media/hero-collaboration.svg"
     alt: Research collaboration illustration
-    label: Meet the team
-    href: "#team"
+    label: About us
+    href: "/about"
 slides_es:
   - title: Transporte cuantico en estructuras de baja dimensionalidad
     meta: Linea destacada
@@ -54,7 +54,7 @@ slides_es:
     image: "/media/hero-collaboration.svg"
     alt: Ilustracion de colaboracion cientifica
     label: Conoce al equipo
-    href: "#team"
+    href: "/about"
 ---
 <!-- lang:en -->
 Animaquantrix is a scientific platform focused on computational and theoretical studies in low-dimensional semiconductor systems.

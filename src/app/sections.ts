@@ -4,8 +4,6 @@ export type SectionDefinition = {
   key: SectionKey
   id: string
   accentColor: string
-  homeVisible: boolean
-  supportsSubpages: boolean
   path?: `/${string}`
   badge?: {
     en: string
@@ -18,8 +16,6 @@ export const SECTION_DEFINITIONS: Record<SectionKey, SectionDefinition> = {
     key: 'hero',
     id: 'hero',
     accentColor: '#0f766e',
-    homeVisible: true,
-    supportsSubpages: false,
     badge: {
       en: 'Scientific Platform',
       es: 'Plataforma Cientifica',
@@ -29,38 +25,30 @@ export const SECTION_DEFINITIONS: Record<SectionKey, SectionDefinition> = {
     key: 'research',
     id: 'research',
     accentColor: '#0e7490',
-    homeVisible: true,
-    supportsSubpages: true,
     path: '/research',
   },
-  team: {
-    key: 'team',
-    id: 'team',
+  about: {
+    key: 'about',
+    id: 'about',
     accentColor: '#2f855a',
-    homeVisible: true,
-    supportsSubpages: false,
+    path: '/about',
   },
   software: {
     key: 'software',
     id: 'software',
     accentColor: '#c05621',
-    homeVisible: true,
-    supportsSubpages: true,
     path: '/software',
   },
   contact: {
     key: 'contact',
     id: 'contact',
     accentColor: '#7c3aed',
-    homeVisible: true,
-    supportsSubpages: false,
   },
 }
 
 export const HOME_SECTION_ORDER: SectionKey[] = [
   'hero',
   'research',
-  'team',
   'software',
   'contact',
 ]

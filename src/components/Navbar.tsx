@@ -13,8 +13,8 @@ const navContent = {
     links: [
       { href: '#top', label: 'Home' },
       { href: '#research', label: 'Research' },
-      { href: '#team', label: 'Team' },
       { href: '#software', label: 'Software' },
+      { href: '#about', label: 'About Us' },
       { href: '#contact', label: 'Contact' },
     ],
   },
@@ -23,8 +23,8 @@ const navContent = {
     links: [
       { href: '#top', label: 'Inicio' },
       { href: '#research', label: 'Investigacion' },
-      { href: '#team', label: 'Equipo' },
       { href: '#software', label: 'Software' },
+      { href: '#about', label: 'Sobre Nosotros' },
       { href: '#contact', label: 'Contacto' },
     ],
   },

@@ -18,39 +18,19 @@ export type SectionItem = {
   meta?: string
 }
 
-export type SectionPage = {
-  slug: string
-  title: string
-  subtitle?: string
-  description: string
-  body: string
-  image?: string
-  alt?: string
-  label?: string
-  meta?: string
-}
-
 export type SectionMetadata = {
   title: string
   subtitle: string
   buttons: ContentButton[]
   slides: SectionItem[]
+  topics: SectionItem[]
+  publications: SectionItem[]
   items: SectionItem[]
-  pages: SectionPage[]
 }
 
 export type SectionContent = {
   metadata: SectionMetadata
   content: string
-}
-
-type ContentRule = {
-  requirePageBodies?: boolean
-}
-
-const CONTENT_RULES: Partial<Record<SectionKey, ContentRule>> = {
-  research: { requirePageBodies: true },
-  software: { requirePageBodies: true },
 }
 
 type FrontmatterObject = Record<string, unknown>
@@ -164,7 +144,7 @@ function normalizeItems(value: unknown): SectionItem[] {
 function extractLocalizedBody(rawContent: string, language: Language): string {
   const localizedBlock = rawContent.match(
     new RegExp(
-      `<!--\\s*lang:${language}\\s*-->([\\s\\S]*?)(?=<!--\\s*(?:lang:(?:en|es)|page:[^\\s]+\\s+lang:(?:en|es))\\s*-->|$)`,
+      `<!--\\s*lang:${language}\\s*-->([\\s\\S]*?)(?=<!--\\s*lang:(?:en|es)\\s*-->|$)`,
     ),
   )
 
@@ -174,55 +154,8 @@ function extractLocalizedBody(rawContent: string, language: Language): string {
 
   return rawContent.trim()
 }
-
-function extractLocalizedPageBodies(rawContent: string, language: Language) {
-  const pageBodies: Record<string, string> = {}
-  const regex =
-    /<!--\s*page:([a-zA-Z0-9-]+)\s+lang:(en|es)\s*-->([\s\S]*?)(?=<!--\s*(?:page:[a-zA-Z0-9-]+\s+lang:(?:en|es)|lang:(?:en|es))\s*-->|$)/g
-
-  let match: RegExpExecArray | null
-  while ((match = regex.exec(rawContent)) !== null) {
-    const [, slug, matchLanguage, body] = match
-    if (matchLanguage === language) {
-      pageBodies[slug] = body.trim()
-    }
-  }
-
-  return pageBodies
-}
-
-function normalizePages(
-  value: unknown,
-  pageBodies: Record<string, string>,
-): SectionPage[] {
-  if (!Array.isArray(value)) {
-    return []
-  }
-
-  return value
-    .map((entry) => {
-      const item = entry as FrontmatterObject
-      const slug = cleanValue(item.slug ?? '')
-
-      return {
-        slug,
-        title: cleanValue(item.title ?? ''),
-        subtitle: cleanValue(item.subtitle ?? '') || undefined,
-        description: cleanValue(item.description ?? ''),
-        image: cleanValue(item.image ?? '') || undefined,
-        alt: cleanValue(item.alt ?? '') || undefined,
-        label: cleanValue(item.label ?? '') || undefined,
-        meta: cleanValue(item.meta ?? '') || undefined,
-        body: pageBodies[slug] ?? '',
-      }
-    })
-    .filter((item) => item.slug && item.title)
-}
-
 function validateSectionContent(sectionKey: SectionKey, content: SectionContent) {
-  const rule = CONTENT_RULES[sectionKey]
   const itemSlugs = new Set<string>()
-  const pageSlugs = new Set<string>()
 
   for (const item of content.metadata.items) {
     if (item.slug) {
@@ -231,28 +164,6 @@ function validateSectionContent(sectionKey: SectionKey, content: SectionContent)
       }
 
       itemSlugs.add(item.slug)
-    }
-  }
-
-  for (const page of content.metadata.pages) {
-    if (pageSlugs.has(page.slug)) {
-      throw new Error(`Duplicate page slug "${page.slug}" in section "${sectionKey}"`)
-    }
-
-    pageSlugs.add(page.slug)
-
-    if (rule?.requirePageBodies && !page.body) {
-      throw new Error(`Missing body for page "${page.slug}" in section "${sectionKey}"`)
-    }
-  }
-
-  if (rule?.requirePageBodies) {
-    for (const slug of itemSlugs) {
-      if (!pageSlugs.has(slug)) {
-        throw new Error(
-          `Missing page metadata for item slug "${slug}" in section "${sectionKey}"`,
-        )
-      }
     }
   }
 }
@@ -270,8 +181,9 @@ export function parseSectionMarkdown(
         subtitle: '',
         buttons: [],
         slides: [],
+        topics: [],
+        publications: [],
         items: [],
-        pages: [],
       },
       content: rawMarkdown.trim(),
     }
@@ -279,7 +191,6 @@ export function parseSectionMarkdown(
 
   const [, rawFrontmatter, rawContent] = frontmatterMatch
   const data = parseFrontmatter(rawFrontmatter)
-  const pageBodies = extractLocalizedPageBodies(rawContent, language)
 
   return {
     metadata: {
@@ -289,8 +200,11 @@ export function parseSectionMarkdown(
       ),
       buttons: normalizeButtons(getLocalizedValue(data, 'buttons', language)),
       slides: normalizeItems(getLocalizedValue(data, 'slides', language)),
+      topics: normalizeItems(getLocalizedValue(data, 'topics', language)),
+      publications: normalizeItems(
+        getLocalizedValue(data, 'publications', language),
+      ),
       items: normalizeItems(getLocalizedValue(data, 'items', language)),
-      pages: normalizePages(getLocalizedValue(data, 'pages', language), pageBodies),
     },
     content: extractLocalizedBody(rawContent, language),
   }

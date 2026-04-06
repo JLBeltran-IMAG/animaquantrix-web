@@ -178,7 +178,7 @@
   --ambient-x: 76%;
 }
 
-#team {
+#about {
   --ambient-color: #2f855a;
   --ambient-x: 24%;
 }
@@ -629,6 +629,27 @@
   background: rgba(30, 41, 59, 0.8);
 }
 
+.section-button--neutral {
+  border-color: rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.56);
+  color: #e2e8f0;
+}
+
+.section-button--neutral:hover {
+  border-color: color-mix(in srgb, var(--accent-color) 34%, rgba(148, 163, 184, 0.18));
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.section-button--active {
+  background: color-mix(in srgb, var(--accent-color) 84%, white);
+  color: #eff6ff;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent-color) 28%, transparent);
+}
+
+.section-button--active:hover {
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent-color) 32%, transparent);
+}
+
 .section-content {
   max-width: 64ch;
   margin-top: 1.75rem;
@@ -900,6 +921,48 @@
   font-size: 1.22rem;
   line-height: 1.05;
   color: #f8fafc;
+}
+
+#about .section-title,
+#about .section-subtitle,
+#about .section-buttons,
+#about .section-content {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+#about .section-content {
+  max-width: 84ch;
+}
+
+#about .section-items-grid {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+#about .section-item-card {
+  background: rgba(8, 15, 29, 0.42);
+}
+
+#about .section-item-image {
+  width: 112px;
+  height: 112px;
+  margin: 1.4rem auto 0;
+  border-radius: 999px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.68);
+}
+
+#about .section-item-copy {
+  justify-items: center;
+  text-align: center;
+  padding: 1rem 1.35rem 1.35rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
