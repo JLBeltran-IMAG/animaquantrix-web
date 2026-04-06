@@ -25,7 +25,7 @@ const footerContent = {
     contact: 'Contact',
     contactLines: [
       'contact@animaquantrix.org',
-      'Berlin, Germany',
+      'Karlsruhe, Germany',
       'Open to research collaboration',
     ],
     legal: 'All rights reserved.',
