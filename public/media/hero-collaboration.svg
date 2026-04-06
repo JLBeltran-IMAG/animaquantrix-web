@@ -1,0 +1,13 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#050D19"/>
+  <circle cx="220" cy="200" r="210" fill="#0F766E" fill-opacity="0.18"/>
+  <circle cx="1380" cy="220" r="240" fill="#C2410C" fill-opacity="0.18"/>
+  <circle cx="820" cy="720" r="300" fill="#0E7490" fill-opacity="0.16"/>
+  <circle cx="468" cy="402" r="84" fill="#0F172A" stroke="#5EEAD4" stroke-width="8"/>
+  <circle cx="806" cy="290" r="84" fill="#0F172A" stroke="#38BDF8" stroke-width="8"/>
+  <circle cx="1146" cy="462" r="84" fill="#0F172A" stroke="#FB923C" stroke-width="8"/>
+  <path d="M542 378L730 314" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round"/>
+  <path d="M878 338L1074 414" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round"/>
+  <path d="M532 448L1078 454" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round" stroke-dasharray="10 18"/>
+  <text x="536" y="706" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="52" font-weight="700">Collaborative research network</text>
+</svg>
