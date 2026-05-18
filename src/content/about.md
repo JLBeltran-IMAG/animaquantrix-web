@@ -1,7 +1,7 @@
 ---
 subtitle_en: About us
 subtitle_es: Sobre nosotros
-image: "/media/about-person.svg"
+image: "/media/ProfDrLeo.jpeg"
 alt_en: Portrait of Professor Leo Diago Cisneros
 alt_es: Retrato del Profesor Leo Diago Cisneros
 
