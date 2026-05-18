@@ -30,6 +30,10 @@ function SectionRenderer({ sectionKey }: SectionRendererProps) {
       metadata={metadata}
       content={content}
       accentColor={definition.accentColor}
+      language={language}
+      sectionPath={definition.path}
+      previewLimit={definition.previewLimit}
+      badge={definition.badge?.[language]}
     />
   )
 }

@@ -16,15 +16,20 @@ export type SectionItem = {
   href?: string
   label?: string
   meta?: string
+  buttons?: ContentButton[]
 }
 
 export type SectionMetadata = {
   title: string
   subtitle: string
+  image?: string
+  alt?: string
   buttons: ContentButton[]
   slides: SectionItem[]
   topics: SectionItem[]
   publications: SectionItem[]
+  collaborators: SectionItem[]
+  students: SectionItem[]
   items: SectionItem[]
 }
 
@@ -46,6 +51,8 @@ function parseFrontmatter(frontmatter: string): FrontmatterObject {
   const lines = frontmatter.split('\n')
   let currentArrayKey = ''
   let currentItem: FrontmatterObject | null = null
+  let currentNestedArrayKey = ''
+  let currentNestedItem: FrontmatterObject | null = null
 
   for (const rawLine of lines) {
     const line = rawLine.replace(/\r/g, '')
@@ -63,10 +70,14 @@ function parseFrontmatter(frontmatter: string): FrontmatterObject {
         result[key] = value
         currentArrayKey = ''
         currentItem = null
+        currentNestedArrayKey = ''
+        currentNestedItem = null
       } else {
         result[key] = []
         currentArrayKey = key
         currentItem = null
+        currentNestedArrayKey = ''
+        currentNestedItem = null
       }
 
       continue
@@ -79,13 +90,45 @@ function parseFrontmatter(frontmatter: string): FrontmatterObject {
         [itemKey]: cleanValue(rawValue),
       }
       ;(result[currentArrayKey] as FrontmatterObject[]).push(currentItem)
+      currentNestedArrayKey = ''
+      currentNestedItem = null
       continue
     }
 
     const itemFieldMatch = line.match(/^\s{4}([a-zA-Z0-9_-]+):\s*(.*)$/)
     if (itemFieldMatch && currentItem) {
       const [, itemKey, rawValue] = itemFieldMatch
-      currentItem[itemKey] = cleanValue(rawValue)
+      const value = cleanValue(rawValue)
+
+      if (value) {
+        currentItem[itemKey] = value
+        currentNestedArrayKey = ''
+        currentNestedItem = null
+      } else {
+        currentItem[itemKey] = []
+        currentNestedArrayKey = itemKey
+        currentNestedItem = null
+      }
+
+      continue
+    }
+
+    const nestedItemStartMatch = line.match(/^\s{6}-\s*([a-zA-Z0-9_-]+):\s*(.*)$/)
+    if (nestedItemStartMatch && currentItem && currentNestedArrayKey) {
+      const [, itemKey, rawValue] = nestedItemStartMatch
+      currentNestedItem = {
+        [itemKey]: cleanValue(rawValue),
+      }
+      ;(currentItem[currentNestedArrayKey] as FrontmatterObject[]).push(
+        currentNestedItem,
+      )
+      continue
+    }
+
+    const nestedItemFieldMatch = line.match(/^\s{8}([a-zA-Z0-9_-]+):\s*(.*)$/)
+    if (nestedItemFieldMatch && currentNestedItem) {
+      const [, itemKey, rawValue] = nestedItemFieldMatch
+      currentNestedItem[itemKey] = cleanValue(rawValue)
     }
   }
 
@@ -136,6 +179,7 @@ function normalizeItems(value: unknown): SectionItem[] {
         href: cleanValue(item.href ?? '') || undefined,
         label: cleanValue(item.label ?? '') || undefined,
         meta: cleanValue(item.meta ?? '') || undefined,
+        buttons: normalizeButtons(item.buttons),
       }
     })
     .filter((item) => item.title || item.description || item.image)
@@ -179,10 +223,14 @@ export function parseSectionMarkdown(
       metadata: {
         title: '',
         subtitle: '',
+        image: undefined,
+        alt: undefined,
         buttons: [],
         slides: [],
         topics: [],
         publications: [],
+        collaborators: [],
+        students: [],
         items: [],
       },
       content: rawMarkdown.trim(),
@@ -198,12 +246,18 @@ export function parseSectionMarkdown(
       subtitle: cleanValue(
         String(getLocalizedValue(data, 'subtitle', language) ?? ''),
       ),
+      image: cleanValue(String(getLocalizedValue(data, 'image', language) ?? '')) || undefined,
+      alt: cleanValue(String(getLocalizedValue(data, 'alt', language) ?? '')) || undefined,
       buttons: normalizeButtons(getLocalizedValue(data, 'buttons', language)),
       slides: normalizeItems(getLocalizedValue(data, 'slides', language)),
       topics: normalizeItems(getLocalizedValue(data, 'topics', language)),
       publications: normalizeItems(
         getLocalizedValue(data, 'publications', language),
       ),
+      collaborators: normalizeItems(
+        getLocalizedValue(data, 'collaborators', language),
+      ),
+      students: normalizeItems(getLocalizedValue(data, 'students', language)),
       items: normalizeItems(getLocalizedValue(data, 'items', language)),
     },
     content: extractLocalizedBody(rawContent, language),

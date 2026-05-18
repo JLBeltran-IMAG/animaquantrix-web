@@ -47,9 +47,12 @@ function HeroSection({
       : -1
   const currentSlide =
     normalizedActiveSlide >= 0 ? slides[normalizedActiveSlide] : undefined
-  const heroIntro = metadata.subtitle
+  const heroButtons =
+    currentSlide?.buttons && currentSlide.buttons.length > 0
+      ? currentSlide.buttons
+      : metadata.buttons
   const heroHasTitle = Boolean(metadata.title)
-  const heroSlidesLabel = metadata.title || metadata.subtitle || id
+  const heroSlidesLabel = metadata.title || currentSlide?.title || id
 
   return (
     <section
@@ -63,16 +66,6 @@ function HeroSection({
 
           {heroHasTitle ? (
             <h1 className="section-title section-title--hero">{metadata.title}</h1>
-          ) : null}
-
-          {heroIntro ? (
-            <p
-              className={`section-subtitle section-subtitle--hero ${
-                heroHasTitle ? '' : 'section-subtitle--hero-leading'
-              }`}
-            >
-              {heroIntro}
-            </p>
           ) : null}
 
           {currentSlide ? (
@@ -96,9 +89,9 @@ function HeroSection({
             <MarkdownContent content={content} className="section-content section-content--hero" />
           )}
 
-          {metadata.buttons.length > 0 ? (
+          {heroButtons.length > 0 ? (
             <div className="section-buttons">
-              {metadata.buttons.map((button, index) => (
+              {heroButtons.map((button, index) => (
                 <SmartLink
                   key={`${button.label}-${button.href}`}
                   href={button.href}

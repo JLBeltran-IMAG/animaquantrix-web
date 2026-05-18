@@ -1,10 +1,17 @@
-export type TopLevelSection = 'top' | 'research' | 'about' | 'software' | 'contact'
+export type TopLevelSection =
+  | 'top'
+  | 'research'
+  | 'about'
+  | 'software'
+  | 'talks'
+  | 'contact'
 
 export const SECTION_PATHS: Record<TopLevelSection, string> = {
   top: '/#top',
   research: '/research',
   about: '/about',
   software: '/software',
+  talks: '/talks',
   contact: '/#contact',
 }
 
@@ -15,6 +22,10 @@ export function getActiveSection(pathname: string): TopLevelSection {
 
   if (pathname.startsWith('/software')) {
     return 'software'
+  }
+
+  if (pathname.startsWith('/talks')) {
+    return 'talks'
   }
 
   if (pathname.startsWith('/about')) {
@@ -38,6 +49,10 @@ export function getSectionDestination(
 
   if (target === 'about') {
     return pathname.startsWith('/about') ? pathname : '/about'
+  }
+
+  if (target === 'talks') {
+    return pathname.startsWith('/talks') ? pathname : '/talks'
   }
 
   if (target === 'top') {

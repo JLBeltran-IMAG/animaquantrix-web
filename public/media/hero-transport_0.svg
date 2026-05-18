@@ -1,0 +1,10 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#06101F"/>
+  <circle cx="242" cy="182" r="240" fill="#0F766E" fill-opacity="0.24"/>
+  <circle cx="1314" cy="732" r="280" fill="#0891B2" fill-opacity="0.18"/>
+  <path d="M130 630C310 520 452 690 628 580C801 472 924 308 1140 344C1298 371 1388 464 1472 536" stroke="#E2E8F0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M176 556C338 446 480 612 646 512C814 410 964 224 1174 250C1322 269 1432 344 1510 400" stroke="#5EEAD4" stroke-width="8" stroke-linecap="round" stroke-dasharray="10 20"/>
+  <rect x="948" y="128" width="328" height="180" rx="28" fill="#0F172A" fill-opacity="0.72" stroke="#5EEAD4" stroke-opacity="0.32"/>
+  <text x="992" y="198" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="48" font-weight="700">Transport</text>
+  <text x="992" y="252" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="28">Low-dimensional semiconductor systems</text>
+</svg>

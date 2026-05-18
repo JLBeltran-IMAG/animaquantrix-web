@@ -5,6 +5,7 @@ export type SectionDefinition = {
   id: string
   accentColor: string
   path?: `/${string}`
+  previewLimit?: number
   badge?: {
     en: string
     es: string
@@ -26,6 +27,7 @@ export const SECTION_DEFINITIONS: Record<SectionKey, SectionDefinition> = {
     id: 'research',
     accentColor: '#0e7490',
     path: '/research',
+    previewLimit: 4,
   },
   about: {
     key: 'about',
@@ -38,6 +40,14 @@ export const SECTION_DEFINITIONS: Record<SectionKey, SectionDefinition> = {
     id: 'software',
     accentColor: '#c05621',
     path: '/software',
+    previewLimit: 3,
+  },
+  talks: {
+    key: 'talks',
+    id: 'talks',
+    accentColor: '#b45309',
+    path: '/talks',
+    previewLimit: 3,
   },
   contact: {
     key: 'contact',
@@ -50,6 +60,7 @@ export const HOME_SECTION_ORDER: SectionKey[] = [
   'hero',
   'research',
   'software',
+  'talks',
   'contact',
 ]
 

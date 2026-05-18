@@ -20,7 +20,9 @@ function AppRouter() {
                 key={section.key}
                 path={section.path}
                 element={
-                  <SectionPage sectionKey={section.key as 'research' | 'software'} />
+                  <SectionPage
+                    sectionKey={section.key as 'research' | 'software' | 'about' | 'talks'}
+                  />
                 }
               />
             )

@@ -2,7 +2,7 @@ import type { SectionKey } from '../content/registry'
 import SectionRenderer from '../components/sections/SectionRenderer'
 
 type SectionPageProps = {
-  sectionKey: Extract<SectionKey, 'research' | 'software' | 'about'>
+  sectionKey: Extract<SectionKey, 'research' | 'software' | 'about' | 'talks'>
 }
 
 function SectionPage({ sectionKey }: SectionPageProps) {
