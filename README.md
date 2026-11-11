@@ -30,4 +30,4 @@ The homepage and `/research`, `/software`, `/talks`, and `/about` use the existi
 
 ## Deployment
 
-Publish the `dist/` output using the existing GitHub Pages setup. Vite's base setting, asset URLs, and browser routing configuration remain unchanged. Direct visits to client routes require the host's existing SPA fallback; Vite's preview server supplies a fallback for local review.
+Production is deployed by the connected Vercel project when `main` is updated. The `vercel.json` rewrite serves `index.html` for client routes, supporting direct visits and refreshes. Vite's base setting, asset URLs, and browser routing configuration remain unchanged; the static build is written to `dist/`.
