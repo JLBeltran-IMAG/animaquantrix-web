@@ -7,13 +7,13 @@ function ScrollManager() {
   useEffect(() => {
     if (location.hash) {
       const targetId = location.hash.slice(1)
-      window.requestAnimationFrame(() => {
+      const frame = window.requestAnimationFrame(() => {
         const target = document.getElementById(targetId)
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })
         }
       })
-      return
+      return () => window.cancelAnimationFrame(frame)
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })

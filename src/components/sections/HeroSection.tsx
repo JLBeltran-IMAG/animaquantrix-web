@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
+import { useLanguage } from '../../app/useLanguage'
 import type { SectionItem, SectionMetadata } from '../../lib/content'
 import MarkdownContent from '../MarkdownContent'
 import SmartLink from '../SmartLink'
@@ -8,7 +8,6 @@ type HeroSectionProps = {
   id: string
   metadata: SectionMetadata
   content: string
-  accentColor: string
   badge?: string
 }
 
@@ -20,45 +19,54 @@ function HeroSection({
   id,
   metadata,
   content,
-  accentColor,
   badge,
 }: HeroSectionProps) {
-  const slides = metadata.slides ?? []
-  const [activeSlide, setActiveSlide] = useState(() =>
-    slides.length > 0 ? 0 : -1,
-  )
-
-  useEffect(() => {
-    if (slides.length <= 1) {
-      return
-    }
-
-    const interval = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % slides.length)
-    }, 5000)
-
-    return () => window.clearInterval(interval)
-  }, [slides.length])
-  const normalizedActiveSlide =
-    slides.length > 0
-      ? activeSlide >= 0
-        ? activeSlide % slides.length
-        : 0
-      : -1
-  const currentSlide =
-    normalizedActiveSlide >= 0 ? slides[normalizedActiveSlide] : undefined
-  const heroButtons =
-    currentSlide?.buttons && currentSlide.buttons.length > 0
-      ? currentSlide.buttons
-      : metadata.buttons
+  const slides = metadata.slides
+  const [activeSlide, setActiveSlide] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const [hasFocus, setHasFocus] = useState(false)
+  const { language } = useLanguage()
+  const normalizedActiveSlide = slides.length > 0 ? activeSlide % slides.length : -1
+  const currentSlide = slides[normalizedActiveSlide]
   const heroHasTitle = Boolean(metadata.title)
   const heroSlidesLabel = metadata.title || currentSlide?.title || id
+
+  useEffect(() => {
+    if (slides.length < 2 || isHovered || hasFocus) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let timer: number | undefined
+
+    function scheduleNextSlide() {
+      window.clearTimeout(timer)
+      if (reducedMotion.matches || document.hidden) return
+
+      timer = window.setTimeout(() => {
+        setActiveSlide((current) => (current + 1) % slides.length)
+      }, 5000)
+    }
+
+    scheduleNextSlide()
+    reducedMotion.addEventListener('change', scheduleNextSlide)
+    document.addEventListener('visibilitychange', scheduleNextSlide)
+
+    return () => {
+      window.clearTimeout(timer)
+      reducedMotion.removeEventListener('change', scheduleNextSlide)
+      document.removeEventListener('visibilitychange', scheduleNextSlide)
+    }
+  }, [activeSlide, slides.length, isHovered, hasFocus])
 
   return (
     <section
       id={id}
       className="section-panel section-panel--hero"
-      style={{ '--accent-color': accentColor } as CSSProperties}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setHasFocus(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHasFocus(false)
+      }}
     >
       <div className="section-hero-grid">
         <div className="section-hero-copy">
@@ -74,7 +82,7 @@ function HeroSection({
                 <p className="hero-slide-meta">{currentSlide.meta}</p>
               ) : null}
               {currentSlide.title ? (
-                <h2 className="hero-copy-title">{currentSlide.title}</h2>
+                <h1 className="hero-copy-title">{currentSlide.title}</h1>
               ) : null}
               {currentSlide.description ? (
                 <p className="hero-copy-description">{currentSlide.description}</p>
@@ -89,28 +97,11 @@ function HeroSection({
             <MarkdownContent content={content} className="section-content section-content--hero" />
           )}
 
-          {heroButtons.length > 0 ? (
-            <div className="section-buttons">
-              {heroButtons.map((button, index) => (
-                <SmartLink
-                  key={`${button.label}-${button.href}`}
-                  href={button.href}
-                  className={`section-button ${
-                    index === 0
-                      ? 'section-button--primary'
-                      : 'section-button--secondary'
-                  }`}
-                >
-                  {button.label}
-                </SmartLink>
-              ))}
-            </div>
-          ) : null}
         </div>
 
         {currentSlide ? (
           <div className="hero-visual">
-            <div className="hero-visual-frame">
+            <div className={`hero-visual-frame ${normalizedActiveSlide === 0 ? 'hero-visual-frame--diagram' : ''}`}>
               {currentSlide.image ? (
                 <img
                   src={currentSlide.image}
@@ -121,7 +112,9 @@ function HeroSection({
                 <div className="hero-visual-placeholder" />
               )}
 
-              <div className="hero-visual-overlay" />
+              <p className="visual-caption">
+                <span>ANIMAQUANTRIX /</span> {currentSlide.meta}
+              </p>
 
               {slides.length > 1 ? (
                 <>
@@ -133,7 +126,7 @@ function HeroSection({
                         (current) => (current - 1 + slides.length) % slides.length,
                       )
                     }
-                    aria-label="Previous slide"
+                    aria-label={language === 'en' ? 'Previous slide' : 'Diapositiva anterior'}
                   >
                     <span aria-hidden="true">‹</span>
                   </button>
@@ -143,7 +136,7 @@ function HeroSection({
                     onClick={() =>
                       setActiveSlide((current) => (current + 1) % slides.length)
                     }
-                    aria-label="Next slide"
+                    aria-label={language === 'en' ? 'Next slide' : 'Diapositiva siguiente'}
                   >
                     <span aria-hidden="true">›</span>
                   </button>
@@ -154,8 +147,8 @@ function HeroSection({
             {slides.length > 1 ? (
               <div
                 className="hero-slide-nav"
-                role="tablist"
-                aria-label={`${heroSlidesLabel} slides`}
+                role="group"
+                aria-label={`${heroSlidesLabel} — ${language === 'en' ? 'Choose a slide' : 'Elegir diapositiva'}`}
               >
                 {slides.map((slide, index) => (
                   <button
@@ -168,7 +161,8 @@ function HeroSection({
                     aria-pressed={index === normalizedActiveSlide}
                     aria-label={getSlideLabel(slide, index)}
                   >
-                    <span className="hero-slide-trigger-dot" />
+                    <span className="hero-slide-trigger-dot">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{slide.meta}</span>
                   </button>
                 ))}
               </div>

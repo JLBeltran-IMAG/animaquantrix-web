@@ -1,34 +1,54 @@
-import type { CSSProperties } from 'react'
 import { useLocation } from 'react-router-dom'
 import type { Language } from '../../app/i18n'
 import type { SectionItem, SectionMetadata } from '../../lib/content'
 import MarkdownContent from '../MarkdownContent'
 import SmartLink from '../SmartLink'
+import SectionButtons from './SectionButtons'
+import SectionItemCard from './SectionItemCard'
 
 type OverviewSectionProps = {
   id: string
   metadata: SectionMetadata
   content: string
-  accentColor: string
   language: Language
   sectionPath?: `/${string}`
   previewLimit?: number
   badge?: string
 }
 
+const sectionPresentation: Record<string, {
+  number: string
+  eyebrow: Record<Language, string>
+  title?: Record<Language, string>
+}> = {
+  research: {
+    number: '01',
+    eyebrow: { en: 'Scientific inquiry', es: 'Investigación científica' },
+    title: { en: 'At the frontiers of quantum science.', es: 'En las fronteras de la ciencia cuántica.' },
+  },
+  software: {
+    number: '03',
+    eyebrow: { en: 'Scientific software', es: 'Software científico' },
+    title: { en: 'Research, translated into code.', es: 'La investigación, traducida en código.' },
+  },
+  talks: {
+    number: '04',
+    eyebrow: { en: 'Scientific communication', es: 'Comunicación científica' },
+  },
+  about: {
+    number: '05',
+    eyebrow: { en: 'People & purpose', es: 'Personas y propósito' },
+    title: { en: 'Science grows through connection.', es: 'La ciencia crece a través de la colaboración.' },
+  },
+  contact: {
+    number: '06',
+    eyebrow: { en: 'Start a conversation', es: 'Inicia una conversación' },
+  },
+}
+
 const overflowCtaLabel = {
   en: 'See more',
-  es: 'Ver mas',
-} as const
-
-const defaultItemLinkLabel = {
-  en: 'Open',
-  es: 'Abrir',
-} as const
-
-const githubItemLinkLabel = {
-  en: 'View on GitHub',
-  es: 'Ver en GitHub',
+  es: 'Ver más',
 } as const
 
 const aboutCollectionTitles = {
@@ -42,65 +62,19 @@ const aboutCollectionTitles = {
   },
 } as const
 
-function getGitHubRepositoryPreview(href?: string) {
-  if (!href) {
-    return undefined
-  }
-
-  try {
-    const url = new URL(href)
-
-    if (url.hostname !== 'github.com') {
-      return undefined
-    }
-
-    const [owner, rawRepo] = url.pathname.split('/').filter(Boolean)
-
-    if (!owner || !rawRepo) {
-      return undefined
-    }
-
-    const repo = rawRepo.replace(/\.git$/, '')
-
-    return `https://opengraph.githubassets.com/1/${owner}/${repo}`
-  } catch {
-    return undefined
-  }
-}
-
-function getItemImage(item: SectionItem) {
-  return getGitHubRepositoryPreview(item.href) ?? item.image
-}
-
-function renderItemLink(item: SectionItem, className: string, language: Language) {
-  if (!item.href) {
-    return null
-  }
-
-  const isGitHubLink = Boolean(getGitHubRepositoryPreview(item.href))
-  const fallbackLabel = isGitHubLink
-    ? githubItemLinkLabel[language]
-    : defaultItemLinkLabel[language]
-
-  return (
-    <SmartLink href={item.href} className={className}>
-      {item.label ?? fallbackLabel}
-    </SmartLink>
-  )
-}
-
 function OverviewSection({
   id,
   metadata,
   content,
-  accentColor,
   language,
   sectionPath,
   previewLimit,
   badge,
 }: OverviewSectionProps) {
   const location = useLocation()
+  const presentation = sectionPresentation[id]
   const isHomePage = location.pathname === '/'
+  const Heading = isHomePage ? 'h2' : 'h1'
   const sectionHeading = metadata.title || metadata.subtitle
   const sectionSummary = metadata.title ? metadata.subtitle : ''
   const availableCollections: Array<{ key: string; items: SectionItem[] }> = [
@@ -116,7 +90,7 @@ function OverviewSection({
   )
   const fullItemList = activeCollection ? activeCollection.items : metadata.items
   const aboutCollections =
-    id === 'about'
+    id === 'about' && !isHomePage
       ? [
           {
             key: 'collaborators',
@@ -134,7 +108,6 @@ function OverviewSection({
     isHomePage && previewLimit && fullItemList.length > previewLimit
       ? fullItemList.slice(0, previewLimit)
       : fullItemList
-  const hasCollectionSwitching = availableCollections.length > 0
   const shouldShowOverflowCta =
     isHomePage &&
     Boolean(sectionPath) &&
@@ -145,48 +118,38 @@ function OverviewSection({
   return (
     <section
       id={id}
-      className="section-panel"
-      style={{ '--accent-color': accentColor } as CSSProperties}
+      className={`section-panel section-panel--${id}`}
     >
       {badge ? <p className="section-badge">{badge}</p> : null}
 
-      {sectionHeading ? <h2 className="section-title">{sectionHeading}</h2> : null}
+      <p className="section-eyebrow">{presentation?.number} / {presentation?.eyebrow[language]}</p>
+      <Heading className="section-title">{presentation?.title?.[language] ?? sectionHeading}</Heading>
 
       {sectionSummary ? <p className="section-subtitle">{sectionSummary}</p> : null}
 
-      {metadata.buttons.length > 0 ? (
-        <div className="section-buttons">
-          {metadata.buttons.map((button, index) => (
-            <SmartLink
-              key={`${button.label}-${button.href}`}
-              href={button.href}
-              className={`section-button ${
-                hasCollectionSwitching
-                  ? button.href.endsWith(`#${activeCollectionKey}`)
-                    ? 'section-button--active'
-                    : 'section-button--neutral'
-                  : index === 0
-                    ? 'section-button--primary'
-                    : 'section-button--secondary'
-              }`}
-            >
-              {button.label}
-            </SmartLink>
-          ))}
-        </div>
-      ) : null}
+      <SectionButtons buttons={metadata.buttons} activeCollectionKey={activeCollectionKey} />
       {id === 'about' && metadata.image ? (
         <div className="section-content-with-media">
           <MarkdownContent content={content} className="section-content" />
           <img
             src={metadata.image}
             alt={metadata.alt ?? sectionHeading}
-            className="section-content-media"
+            className="section-content-media" loading="lazy"
           />
         </div>
       ) : (
         <MarkdownContent content={content} className="section-content" />
       )}
+
+      {id === 'about' && isHomePage ? (
+        <div className="about-mission">
+          <p className="section-eyebrow">{language === 'en' ? 'Collaboration · Open science' : 'Colaboración · Ciencia abierta'}</p>
+          <p>{language === 'en'
+            ? 'Bringing theoretical inquiry, computational tools, and scientific exchange together. Explore the people and ideas behind Animaquantrix.'
+            : 'Conectando preguntas teóricas, herramientas computacionales e intercambio científico. Descubre las personas y las ideas detrás de Animaquantrix.'}</p>
+          <SmartLink href="/about" className="section-item-link">{language === 'en' ? 'Meet our collaborators & students' : 'Conoce a nuestros colaboradores y estudiantes'}</SmartLink>
+        </div>
+      ) : null}
 
       {aboutCollections.length > 0 ? (
         <>
@@ -195,50 +158,27 @@ function OverviewSection({
               <h3 className="section-collection-title">{collection.title}</h3>
               <div className="section-items-grid">
                 {collection.items.map((item, index) => (
-                  <article className="section-item-card" key={`${item.title}-${index}`}>
-                    {getItemImage(item) ? (
-                      <img
-                        src={getItemImage(item)}
-                        alt={item.alt ?? item.title}
-                        className="section-item-image"
-                      />
-                    ) : null}
-
-                    <div className="section-item-copy">
-                      {item.meta ? <p className="section-item-meta">{item.meta}</p> : null}
-                      {item.title ? <h3 className="section-item-title">{item.title}</h3> : null}
-                      {item.description ? (
-                        <p className="section-item-description">{item.description}</p>
-                      ) : null}
-                      {renderItemLink(item, 'section-item-link', language)}
-                    </div>
-                  </article>
+                  <SectionItemCard
+                    key={`${item.title}-${index}`}
+                    id={`${id}-${collection.key}-${index}`}
+                    item={item}
+                    language={language}
+                  />
                 ))}
               </div>
             </div>
           ))}
         </>
       ) : visibleItems.length > 0 ? (
-        <div className="section-items-grid">
+        <div className="section-items-grid" id={activeCollectionKey}>
           {visibleItems.map((item, index) => (
-            <article className="section-item-card" key={`${item.title}-${index}`}>
-              {getItemImage(item) ? (
-                <img
-                  src={getItemImage(item)}
-                  alt={item.alt ?? item.title}
-                  className="section-item-image"
-                />
-              ) : null}
-
-              <div className="section-item-copy">
-                {item.meta ? <p className="section-item-meta">{item.meta}</p> : null}
-                {item.title ? <h3 className="section-item-title">{item.title}</h3> : null}
-                {item.description ? (
-                  <p className="section-item-description">{item.description}</p>
-                ) : null}
-                {renderItemLink(item, 'section-item-link', language)}
-              </div>
-            </article>
+            <SectionItemCard
+              key={`${item.title}-${index}`}
+              id={`${id}-item-${index}`}
+              item={item}
+              language={language}
+              showSoftwareFeatures={id === 'software'}
+            />
           ))}
         </div>
       ) : null}

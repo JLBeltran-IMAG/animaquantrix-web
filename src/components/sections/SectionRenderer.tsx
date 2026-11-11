@@ -18,7 +18,6 @@ function SectionRenderer({ sectionKey }: SectionRendererProps) {
         id={definition.id}
         metadata={metadata}
         content={content}
-        accentColor={definition.accentColor}
         badge={definition.badge?.[language]}
       />
     )
@@ -29,7 +28,6 @@ function SectionRenderer({ sectionKey }: SectionRendererProps) {
       id={definition.id}
       metadata={metadata}
       content={content}
-      accentColor={definition.accentColor}
       language={language}
       sectionPath={definition.path}
       previewLimit={definition.previewLimit}

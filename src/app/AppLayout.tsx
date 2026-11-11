@@ -4,11 +4,14 @@ import Navbar from '../components/Navbar'
 
 function AppLayout() {
   return (
-    <main id="top" className="app-shell">
+    <div id="top" className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to content / Ir al contenido</a>
       <Navbar />
-      <Outlet />
+      <main id="main-content" tabIndex={-1}>
+        <Outlet />
+      </main>
       <Footer />
-    </main>
+    </div>
   )
 }
 

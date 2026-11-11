@@ -39,25 +39,8 @@ export function getSectionDestination(
   pathname: string,
   target: TopLevelSection,
 ): string {
-  if (target === 'research') {
-    return pathname.startsWith('/research') ? pathname : '/research'
-  }
+  if (target === 'top') return '/'
 
-  if (target === 'software') {
-    return pathname.startsWith('/software') ? pathname : '/software'
-  }
-
-  if (target === 'about') {
-    return pathname.startsWith('/about') ? pathname : '/about'
-  }
-
-  if (target === 'talks') {
-    return pathname.startsWith('/talks') ? pathname : '/talks'
-  }
-
-  if (target === 'top') {
-    return '/'
-  }
-
-  return SECTION_PATHS[target]
+  const destination = SECTION_PATHS[target]
+  return target !== 'contact' && pathname.startsWith(destination) ? pathname : destination
 }

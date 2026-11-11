@@ -1,73 +1,33 @@
-# React + TypeScript + Vite
+# Animaquantrix website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React and TypeScript website built with Vite. Section content and English/Spanish translations live in `src/content/*.md`; local media paths in that content resolve from `public/`.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Validation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm run lint
+npx tsc -b
+npm run build
 ```
+
+`npm run build` runs TypeScript checks and writes the production site to `dist/`. Use `npm run preview` to inspect that build locally.
+
+## Code organization
+
+- `src/app/`: routing, section definitions, language context, and scroll management.
+- `src/content/` and `src/lib/content.ts`: localized Markdown sources, parsing, and cached content.
+- `src/components/sections/`: hero, discovery sections, section composition, and shared cards and buttons.
+- `src/styles/`: global defaults and the responsive design system.
+
+The homepage and `/research`, `/software`, `/talks`, and `/about` use the existing React Router configuration. Research collections also use `#topics` and `#publications`; contact is on the homepage at `/#contact`.
+
+## Deployment
+
+Publish the `dist/` output using the existing GitHub Pages setup. Vite's base setting, asset URLs, and browser routing configuration remain unchanged. Direct visits to client routes require the host's existing SPA fallback; Vite's preview server supplies a fallback for local review.

@@ -1,4 +1,4 @@
-import ScanDivider from '../components/ScanDivider'
+import { PillarsSection, SimulationsSection } from '../components/sections/DiscoverySections'
 import { HOME_SECTION_ORDER } from '../app/sections'
 import SectionRenderer from '../components/sections/SectionRenderer'
 
@@ -8,7 +8,8 @@ function HomePage() {
       {HOME_SECTION_ORDER.map((sectionKey, index) => (
         <div key={sectionKey}>
           <SectionRenderer sectionKey={sectionKey} />
-          {index < HOME_SECTION_ORDER.length - 1 ? <ScanDivider /> : null}
+          {index === 0 ? <PillarsSection /> : null}
+          {sectionKey === 'research' ? <SimulationsSection /> : null}
         </div>
       ))}
     </div>

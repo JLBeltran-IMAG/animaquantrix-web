@@ -14,6 +14,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguage] = useState<Language>(getPreferredLanguage)
 
   useEffect(() => {
+    document.documentElement.lang = language
     window.localStorage.setItem('language', language)
   }, [language])
 

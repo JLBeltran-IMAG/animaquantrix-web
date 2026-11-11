@@ -1,7 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  --font-family: 'Manrope', sans-serif;
+  --text-hero: clamp(2.5rem, 3.8vw, 4rem);
+  --text-section: clamp(36px, 3.1vw, 44px);
+  --text-card: clamp(22px, 1.8vw, 26px);
+  --text-subheading: clamp(20px, 1.6vw, 24px);
+  --text-body: clamp(16px, 1.2vw, 18px);
+  --text-description: clamp(17px, 1.25vw, 18px);
+  --text-ui: clamp(15px, 1.1vw, 16px);
+  --text-label: clamp(13px, 0.98vw, 14px);
+  font-family: var(--font-family);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  font-weight: 400;
   color: #e2e8f0;
   background: #020617;
   font-synthesis: none;
@@ -15,6 +25,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  letter-spacing: normal;
 }
 
 html {
@@ -30,23 +41,41 @@ body,
 
 body {
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, #06101f 0%, #020617 100%);
-  color: #e2e8f0;
+  background: radial-gradient(ellipse at 85% 8%, #102b3744, transparent 32%), #07121d;
+  color: #edf1ee;
   min-width: 320px;
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'IBM Plex Serif', Georgia, serif;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.2;
   margin: 0;
 }
 
+h1 {
+  font-weight: 800;
+}
+
+button,
+input,
+select,
+textarea,
+pre,
+code,
+kbd,
+samp {
+  font-family: inherit;
+}
+
+button {
+  font-weight: 600;
+}
+
 p {
-  line-height: 1.7;
+  line-height: 1.65;
   margin: 0 0 1rem;
 }
 
@@ -64,4 +93,18 @@ svg {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: #87dfd0;
+  color: #07121d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
